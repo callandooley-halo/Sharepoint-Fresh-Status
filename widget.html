@@ -4,6 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Freshstatus Widget</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        #fsWidgetContainer {
+            width: 100%;
+            height: 100%;
+            display: none; /* Initially hidden */
+        }
+    </style>
 </head>
 <body>
     <div id="fsWidgetContainer"></div>
@@ -11,7 +23,32 @@
         const fsWidgetConfig = {
             id: "9a93febc-60ea-44d9-8444-28881f658874",
         };
+
+        // Function to check for incidents
+        async function checkForIncidents() {
+            try {
+                const response = await fetch('https://api.freshstatus.io/v1/summary?api_key=YOUR_API_KEY'); // Replace with the correct API endpoint and key
+                const data = await response.json();
+                
+                if (data.incidents && data.incidents.length > 0) {
+                    document.getElementById('fsWidgetContainer').style.display = 'block'; // Show the widget container
+                    loadWidgetScript();
+                }
+            } catch (error) {
+                console.error('Error fetching incident data:', error);
+            }
+        }
+
+        // Function to load the widget script
+        function loadWidgetScript() {
+            const scriptElement = document.createElement("script");
+            scriptElement.type = "module";
+            scriptElement.src = "https://cdn.freshstatus.io/widget/index.js";
+            document.head.appendChild(scriptElement);
+        }
+
+        // Check for incidents on page load
+        checkForIncidents();
     </script>
-    <script type="module" src="https://cdn.freshstatus.io/widget/index.js"></script>
 </body>
 </html>
